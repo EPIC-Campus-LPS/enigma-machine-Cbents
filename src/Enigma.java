@@ -4,15 +4,15 @@ import java.util.Objects;
 
 public class Enigma {
     private String message;
+    private Map<Character, Character> plugs;
+    private Map<Character, Character> rotor1 = new HashMap<>();
+    private Map<Character, Character> rotor2 = new HashMap<>();
+    private Map<Character, Character> rotor3 = new HashMap<>();
 
-    public void Encrypt(String m){
 
-        message = m;
-        String encryptedM;
-        char[] charList = message.toCharArray();
+
+    private void setupRotors(){
         //Key is the CURRENT LETTER value is the CHANGE LETTER
-        Map<Character, Character> rotor1 = new HashMap<>();
-
         rotor1.put('a', 'e');
         rotor1.put('b', 'k');
         rotor1.put('c', 'm');
@@ -40,7 +40,7 @@ public class Enigma {
         rotor1.put('y', 'c');
         rotor1.put('z', 'j');
 
-        Map<Character, Character> rotor2 = new HashMap<>();
+
         rotor2.put('a', 'a');
         rotor2.put('b', 'j');
         rotor2.put('c', 'd');
@@ -69,7 +69,6 @@ public class Enigma {
         rotor2.put('z', 'e');
 
 
-        Map<Character, Character> rotor3 = new HashMap<>();
 
         rotor3.put('a', 'b');
         rotor3.put('b', 'd');
@@ -98,28 +97,91 @@ public class Enigma {
         rotor3.put('y', 'q');
         rotor3.put('z', 'o');
 
+    }
+
+    public Enigma(Map<Character, Character> pluh){
+        setupRotors();
+        plugs = pluh;
+    }
+    public String Encrypt(String m){
+
+        message = m;
+        String encryptedM;
+        char[] charList = message.toCharArray();
 
 
-        for (char c : charList){
-            char startC = c;
-            c = rotor1.get(c); //Rotor 1
-            c = rotor2.get(c); // Rotor 2
-            c = rotor3.get(c); // Rotor 3
+
+
+        for (char i = 0; i < charList.length; i++){
+
+            charList[i] = rotor3.get(charList[i]); // Rotor 3
+            charList[i] = rotor2.get(charList[i]); // Rotor 2
+            charList[i] = rotor1.get(charList[i]); //Rotor 1
+
+
             //Reflect
-            c = Reflect(c);
-            char finalC = c;
-            char other = c;
-            other = ReflectBack(other);
-            other = getKeyByValue(rotor3, other);
-            other = getKeyByValue(rotor2, other);
-            other = getKeyByValue(rotor1, other);
+            charList[i] = Reflect(charList[i]);
 
-            System.out.printf("Start Encrypt: %c Finish Encrypt: %c | Start Decrypt: %c Finish Decrypt: %c", startC, finalC, finalC, other);
-            //Go back through the rotors
+
+                        //Go back through the rotors backwards
+            charList[i] = getKeyByValue(rotor1, charList[i]);
+            charList[i] = getKeyByValue(rotor2, charList[i]);
+            charList[i] = getKeyByValue(rotor3, charList[i]);
+
 
         }
+        // 1. Create a StringBuilder
+        StringBuilder sb = new StringBuilder(charList.length);
+
+        // 2. Append each character in the list
+        for (Character c : charList) {
+            sb.append(c);
+        }
+
+        // 3. Convert the StringBuilder to a String
+        encryptedM = sb.toString();
+        return encryptedM;
+
+    }
+
+    public String Decrypt(String m){
+        message = m;
+        String decryptedM;
+        char[] charList = message.toCharArray();
 
 
+
+
+        for (char i = 0; i < charList.length; i++){
+
+            //Go through rotors backwards
+            charList[i] = rotor3.get(charList[i]); // Rotor 3
+            charList[i] = rotor2.get(charList[i]); // Rotor 2
+            charList[i] = rotor1.get(charList[i]); //Rotor 1
+
+
+            //Reflect
+            charList[i] = Reflect(charList[i]);
+
+
+            //Go back through the rotors backwards
+            charList[i] = getKeyByValue(rotor1, charList[i]);
+            charList[i] = getKeyByValue(rotor2, charList[i]);
+            charList[i] = getKeyByValue(rotor3, charList[i]);
+
+
+        }
+        // 1. Create a StringBuilder
+        StringBuilder sb = new StringBuilder(charList.length);
+
+        // 2. Append each character in the list
+        for (Character c : charList) {
+            sb.append(c);
+        }
+
+        // 3. Convert the StringBuilder to a String
+        decryptedM = sb.toString();
+        return decryptedM;
     }
     public static <K, V> K getKeyByValue(Map<K, V> map, V value) {
         for (Map.Entry<K, V> entry : map.entrySet()) {
@@ -141,15 +203,7 @@ public class Enigma {
 
     }
 
-    public static char ReflectBack(char cToReflect){
-        final String ALPHABET = "abcdefghijklmnopqrstuvwxyz";
-        final String reverseA = "zyxwvutsrqponmlkjihgfedcba";
 
-        int rIndex = reverseA.indexOf(cToReflect);
-        cToReflect = ALPHABET.charAt(rIndex);
-        return cToReflect;
-
-    }
 
 
 }
