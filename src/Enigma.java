@@ -103,7 +103,7 @@ public class Enigma {
         setupRotors();
         plugs = pluh;
     }
-    public String Encrypt(String m){
+    public String Process(String m){
 
         message = m;
         String encryptedM;
@@ -113,7 +113,10 @@ public class Enigma {
 
 
         for (char i = 0; i < charList.length; i++){
+            //Put through plugboard settings first
+            charList[i] = plug(charList[i]);
 
+            //Run through rotors normally
             charList[i] = rotor3.get(charList[i]); // Rotor 3
             charList[i] = rotor2.get(charList[i]); // Rotor 2
             charList[i] = rotor1.get(charList[i]); //Rotor 1
@@ -127,6 +130,8 @@ public class Enigma {
             charList[i] = getKeyByValue(rotor1, charList[i]);
             charList[i] = getKeyByValue(rotor2, charList[i]);
             charList[i] = getKeyByValue(rotor3, charList[i]);
+
+            charList[i] = plug(charList[i]);
 
 
         }
@@ -144,45 +149,7 @@ public class Enigma {
 
     }
 
-    public String Decrypt(String m){
-        message = m;
-        String decryptedM;
-        char[] charList = message.toCharArray();
 
-
-
-
-        for (char i = 0; i < charList.length; i++){
-
-            //Go through rotors backwards
-            charList[i] = rotor3.get(charList[i]); // Rotor 3
-            charList[i] = rotor2.get(charList[i]); // Rotor 2
-            charList[i] = rotor1.get(charList[i]); //Rotor 1
-
-
-            //Reflect
-            charList[i] = Reflect(charList[i]);
-
-
-            //Go back through the rotors backwards
-            charList[i] = getKeyByValue(rotor1, charList[i]);
-            charList[i] = getKeyByValue(rotor2, charList[i]);
-            charList[i] = getKeyByValue(rotor3, charList[i]);
-
-
-        }
-        // 1. Create a StringBuilder
-        StringBuilder sb = new StringBuilder(charList.length);
-
-        // 2. Append each character in the list
-        for (Character c : charList) {
-            sb.append(c);
-        }
-
-        // 3. Convert the StringBuilder to a String
-        decryptedM = sb.toString();
-        return decryptedM;
-    }
     public static <K, V> K getKeyByValue(Map<K, V> map, V value) {
         for (Map.Entry<K, V> entry : map.entrySet()) {
             // Use Objects.equals() to safely handle potential null values
@@ -203,6 +170,13 @@ public class Enigma {
 
     }
 
+    private char plug(char c) {
+        return plugs.getOrDefault(c, c);
+    }
+
+    private Map<Character, Character> Rotate(Map<Character, Character> rotor){
+
+    }
 
 
 

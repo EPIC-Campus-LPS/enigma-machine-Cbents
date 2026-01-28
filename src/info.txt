@@ -18,3 +18,15 @@ a→b  b→d  c→f  d→h  e→j  f→l  g→c  h→p
 i→r  j→t  k→x  l→v  m→z  n→n  o→y  p→e
 q→i  r→w  s→g  t→a  u→k  v→m  w→u  x→s
 y→q  z→o
+
+
+BA, QU, CG, XT, DI, ER, JW,
+LS, VK, NM
+
+
+Step happens after full circ.
+
+Have one step var and mod by diff amounts
+
+at the beginning of encrypt: check for each step position
+use 1-26 to represent letters
