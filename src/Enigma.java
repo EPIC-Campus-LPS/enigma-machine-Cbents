@@ -8,6 +8,10 @@ public class Enigma {
     private Map<Character, Character> rotor1 = new HashMap<>();
     private Map<Character, Character> rotor2 = new HashMap<>();
     private Map<Character, Character> rotor3 = new HashMap<>();
+    private int totalSteps = 0;
+    private int fastStep = 0;
+    private int mediumStep = 0;
+    private int slowStep = 0;
 
 
 
@@ -109,29 +113,47 @@ public class Enigma {
         String encryptedM;
         char[] charList = message.toCharArray();
 
-
-
-
         for (char i = 0; i < charList.length; i++){
+            //Check steps
+            if (totalSteps % 676 == 0){
+                slowStep += totalSteps / 676;
+            }
+            else if (totalSteps % 26 == 0){
+                mediumStep += totalSteps / 26;
+            }
+            else{
+                fastStep += totalSteps % 26;
+            }
+
             //Put through plugboard settings first
             charList[i] = plug(charList[i]);
 
             //Run through rotors normally
-            charList[i] = rotor3.get(charList[i]); // Rotor 3
-            charList[i] = rotor2.get(charList[i]); // Rotor 2
-            charList[i] = rotor1.get(charList[i]); //Rotor 1
-
+            char ch = (char)(((((int) charList[i] + fastStep) - 97) % 26) + 97);
+            System.out.println("character 1 " + ch);
+            charList[i] = rotor3.get((char)(((((int) charList[i] + fastStep) - 97) % 26) + 97)); // Rotor 3
+            System.out.println("character 2 " + charList[i]);
+            charList[i] = rotor2.get((char)(((((int) charList[i] + mediumStep) - 97) % 26) + 97)); // Rotor 2
+            System.out.println("character 3 " + charList[i]);
+            charList[i] = rotor1.get((char)(((((int) charList[i] + slowStep) - 97) % 26) + 97)); //Rotor 1
+            System.out.println("character 4 " + charList[i]);
 
             //Reflect
             charList[i] = Reflect(charList[i]);
 
-
+            System.out.println("character 5 " + charList[i]);
                         //Go back through the rotors backwards
-            charList[i] = getKeyByValue(rotor1, charList[i]);
-            charList[i] = getKeyByValue(rotor2, charList[i]);
-            charList[i] = getKeyByValue(rotor3, charList[i]);
-
+            charList[i] = getKeyByValue(rotor1, (char)(((((int) charList[i] + slowStep) - 97) % 26) + 97));
+            System.out.println("character 6 " + charList[i]);
+            charList[i] = getKeyByValue(rotor2, (char)(((((int) charList[i] + mediumStep) - 97) % 26) + 97));
+            System.out.println("character 7 " + charList[i]);
+            System.out.println((char)(((((int) charList[i] + fastStep) - 97) % 26) + 97));
+            charList[i] = getKeyByValue(rotor3, (char)(((((int) charList[i] + fastStep) - 97) % 26) + 97));
+            System.out.println("character 8 " + charList[i]);
             charList[i] = plug(charList[i]);
+            totalSteps += 1;
+
+            System.out.println("_______________");
 
 
         }
@@ -174,9 +196,7 @@ public class Enigma {
         return plugs.getOrDefault(c, c);
     }
 
-    private Map<Character, Character> Rotate(Map<Character, Character> rotor){
 
-    }
 
 
 
